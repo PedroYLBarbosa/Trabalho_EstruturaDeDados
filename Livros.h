@@ -1,3 +1,5 @@
+#ifndef LIVROS_H
+#define LIVROS_H
 typedef struct {
     int codigo;
     char titulo[100];
@@ -9,3 +11,10 @@ typedef struct {
 
 Livro criarLivro(int codigo, char titulo[], char autor[], int ano, int quantidadeTotal);
 void exibirLivro(Livro livro);
+int obterCodigoLivro ( Livro* livro ) ;
+int obterQuantidadeDisponivel ( Livro* livro ) ;
+void emprestarExemplar ( Livro* livro ) ;
+void devolverExemplar ( Livro* livro ) ;
+
+
+#endif
