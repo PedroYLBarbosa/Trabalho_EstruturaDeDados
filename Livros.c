@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h> // Necessário para a função strcpy()
-#include "Livros.h"
+#include "livros.h"
 
 //FUNÇÃO PARA CRIAR UM LIVRO
 Livro criarLivro(int codigo, char titulo[], char autor[], int ano, int quantidadeTotal){

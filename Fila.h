@@ -1,4 +1,4 @@
-#ifdef FILA_H
+#ifndef FILA_H
 #define FILA_H
 
 typedef struct Reserva {
@@ -16,4 +16,10 @@ typedef struct Fila{
     NoFila *fim;
 } Fila;
 
+//ASSINATURA DAS FUNÇÕES
+Fila * criarFila () ;
+void enfileirarReserva ( Fila * fila , Reserva reserva );
+Reserva desenfileirarReserva(Fila *fila); 
+int filaVazia ( Fila * fila ) ;
+void exibirReservas ( Fila * fila );
 #endif

@@ -1,26 +1,28 @@
 #ifndef ARVORE_H
 #define ARVORE_H
 
-#include "Livros.h"
+#include "livros.h"
 
 typedef struct NoArvore {
     Livro livro;
     struct NoArvore *esquerda;
     struct NoArvore *direita;
 } NoArvore;
-typedef struct Arvore{
+
+typedef struct Arvore {
     NoArvore *raiz;
 } Arvore;
 
+// ASSINATURA DAS FUNÇÕES OBRIGATÓRIAS
 Arvore* criarArvore();
-void inserirLivroArvore(Arvore *arvore, Livro livro);
+void inserirLivroArvore(Arvore *arvore, Livro *livro); 
 Livro* buscarLivroArvore(Arvore *arvore, int codigo);
 
-void listarLivrosCrescente(NoArvore *no);
-void listarLivrosPreOrdem(NoArvore *no);
-void listarLivrosPosOrdem(NoArvore *no);
+void listarLivrosEmOrdem(Arvore *arvore);
+void listarLivrosPreOrdem(Arvore *arvore);
+void listarLivrosPosOrdem(Arvore *arvore);
 
-int contarLivros ( Arvore * arvore );
-int calcularAlturaArvore ( Arvore * arvore );
+int contarLivros(Arvore *arvore);
+int calcularAlturaArvore(Arvore *arvore);
 
 #endif

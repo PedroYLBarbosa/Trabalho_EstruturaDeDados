@@ -1,44 +1,107 @@
+#include <stdio.h>
 #include <stdlib.h> 
-#include "Arvore.h"
-#include "Livros.h"
+#include "arvore.h"
+#include "livros.h"
 
+// =======================================================
+// FUNÇÕES AUXILIARES (Lidam com a recursão dos nós)
+// =======================================================
 
-//FUNÇÃO PARA CRIAR UMA ÁRVORE BINÁRIA DE BUSCA
+void listarEmOrdemAux(NoArvore *no) {
+    if(no != NULL) {
+        listarEmOrdemAux(no->esquerda);
+        exibirLivro(no->livro); 
+        listarEmOrdemAux(no->direita);
+    }
+}
+
+void listarPreOrdemAux(NoArvore *no) {
+    if(no != NULL) {
+        exibirLivro(no->livro);
+        listarPreOrdemAux(no->esquerda);
+        listarPreOrdemAux(no->direita);
+    }
+}
+
+void listarPosOrdemAux(NoArvore *no) {
+    if(no != NULL) {
+        listarPosOrdemAux(no->esquerda);
+        listarPosOrdemAux(no->direita);
+        exibirLivro(no->livro);
+    }
+}
+
+int contarLivrosAux(NoArvore *no) {
+    if (no == NULL) {
+        return 0;
+    }
+    return 1 + contarLivrosAux(no->esquerda) + contarLivrosAux(no->direita);
+}
+
+int calcularAlturaAux(NoArvore *no) {
+    if (no == NULL) {
+        return -1;
+    }
+    int alturaEsquerda = calcularAlturaAux(no->esquerda);
+    int alturaDireita = calcularAlturaAux(no->direita);
+    return 1 + (alturaEsquerda > alturaDireita ? alturaEsquerda : alturaDireita);
+}
+
+// =======================================================
+// FUNÇÕES PRINCIPAIS (Assinaturas exigidas no Classroom)
+// =======================================================
+
 Arvore* criarArvore() {
     Arvore *arvore = (Arvore*) malloc(sizeof(Arvore));
-    arvore->raiz = NULL;
+    if (arvore != NULL) {
+        arvore->raiz = NULL;
+    }
     return arvore;
 }
-//FUNÇÃO PARA INSERIR UM LIVRO NA ÁRVORE BINÁRIA DE BUSCA
-void inserirLivroArvore(Arvore *arvore, Livro livro) {
+
+// Atualizado para receber Livro* livro
+void inserirLivroArvore(Arvore *arvore, Livro *livro) {
+    // 1. Declaramos TODAS as variáveis no topo da função (Padrão C Clássico)
     NoArvore *novoNo = (NoArvore*) malloc(sizeof(NoArvore));
-    novoNo->livro = livro;
+    NoArvore *atual = NULL; 
+    NoArvore *pai = NULL;   
+
+    // Verifica se a memória foi alocada com sucesso
+    if (novoNo == NULL) {
+        printf("Erro de memoria!\n");
+        return;
+    }
+
+    // Copia todos os dados do livro apontado para dentro do nó
+    novoNo->livro = *livro; 
     novoNo->esquerda = NULL;
     novoNo->direita = NULL;
 
+    // 2. Lógica de inserção
     if(arvore->raiz == NULL){
         arvore->raiz = novoNo;
     } else {
-        NoArvore *atual = arvore->raiz;
-        NoArvore *pai = NULL;
+        // Agora apenas usamos o 'atual' que já foi criado lá em cima
+        atual = arvore->raiz; 
 
         while(atual != NULL){
             pai = atual;
-            if(livro.codigo < atual->livro.codigo){
+            
+            if(livro->codigo < atual->livro.codigo){ 
                 atual = atual->esquerda;
             } else {
                 atual = atual->direita;
             }
         }
-        if(livro.codigo < pai->livro.codigo){
+        
+        if(livro->codigo < pai->livro.codigo){
             pai->esquerda = novoNo;
         } else {
             pai->direita = novoNo;
         }
     }
 }
-
-Livro *buscarLivroArvore(Arvore *arvore, int codigo) {
+Livro* buscarLivroArvore(Arvore *arvore, int codigo) {
     NoArvore *atual = arvore->raiz;
 
     while(atual != NULL){
@@ -53,49 +116,29 @@ Livro *buscarLivroArvore(Arvore *arvore, int codigo) {
     return NULL; 
 }
 
-//FUNÇÃO PARA LISTAR OS LIVROS EM ORDEM CRESCENTE
-void listarLivrosOrdem(Arvore *arvore) {
-    NoArvore *atual = arvore->raiz;
-    if(atual != NULL){
-        listarLivrosOrdem(atual);
-        printf("Código: %d, Título: %s, Autor: %s, Ano: %d, Quantidade Total: %d, Quantidade Disponível: %d\n",
-               atual->livro.codigo, atual->livro.titulo, atual->livro.autor, atual->livro.ano,
-               atual->livro.quantidadeTotal, atual->livro.quantidadeDisponivel);
-    }
+void listarLivrosEmOrdem(Arvore *arvore) {
+    if (arvore != NULL) listarEmOrdemAux(arvore->raiz);
 }
-//FUNÇÃO PARA LISTAR OS LIVROS EM ORDEM PRÉ-ORDEM
-void listarLivrosPreOrdem(NoArvore *no) {
-    if(no != NULL){
-        printf("Código: %d, Título: %s, Autor: %s, Ano: %d, Quantidade Total: %d, Quantidade Disponível: %d\n",
-               no->livro.codigo, no->livro.titulo, no->livro.autor, no->livro.ano,
-               no->livro.quantidadeTotal, no->livro.quantidadeDisponivel);
-        listarLivrosPreOrdem(no->esquerda);
-        listarLivrosPreOrdem(no->direita);
-    }
+
+void listarLivrosPreOrdem(Arvore *arvore) {
+    if (arvore != NULL) listarPreOrdemAux(arvore->raiz);
 }
-//FUNÇÃO PARA LISTAR OS LIVROS EM ORDEM PÓS-ORDEM
-void listarLivrosPosOrdem(NoArvore *no) {
-    if(no != NULL){
-        listarLivrosPosOrdem(no->esquerda);
-        listarLivrosPosOrdem(no->direita);
-        printf("Código: %d, Título: %s, Autor: %s, Ano: %d, Quantidade Total: %d, Quantidade Disponível: %d\n",
-               no->livro.codigo, no->livro.titulo, no->livro.autor, no->livro.ano,
-               no->livro.quantidadeTotal, no->livro.quantidadeDisponivel);
-    }
+
+void listarLivrosPosOrdem(Arvore *arvore) {
+    if (arvore != NULL) listarPosOrdemAux(arvore->raiz);
 }
-//FUNÇÃO PARA CONTAR O NÚMERO TOTAL DE LIVROS NA ÁRVORE
-int contarLivros ( Arvore* arvore ) {
-    if (arvore->raiz == NULL) {
+
+int contarLivros(Arvore* arvore) {
+    if (arvore == NULL || arvore->raiz == NULL) {
         return 0;
     }
-    return arvore->raiz->livro.quantidadeTotal + contarLivros(arvore->raiz->esquerda) + contarLivros(arvore->raiz->direita);
+    return contarLivrosAux(arvore->raiz);
 }
-//FUNÇÃO PARA CALCULAR A ALTURA DA ÁRVORE
-int calcularAlturaArvore ( Arvore* arvore ) {
-    if (arvore->raiz == NULL) {
+
+int calcularAlturaArvore(Arvore* arvore) {
+    if (arvore == NULL || arvore->raiz == NULL) {
         return -1;
     }
-    int alturaEsquerda = calcularAlturaArvore(arvore->raiz->esquerda);
-    int alturaDireita = calcularAlturaArvore(arvore->raiz->direita);
-    return 1 + (alturaEsquerda > alturaDireita ? alturaEsquerda : alturaDireita);
+    // Chama a auxiliar!
+    return calcularAlturaAux(arvore->raiz); 
 }
